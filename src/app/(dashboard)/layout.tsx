@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { 
@@ -12,19 +12,34 @@ import {
   Settings,
   LogOut,
   Menu,
-  X
+  X,
+  Bot,
+  Workflow,
+  History,
+  Shield
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { useAuth } from '@/lib/auth';
+import { getRoleNavigation, hasFeature } from '@/lib/rbac';
+import { Role } from '@/lib/types';
+import GuidedTour from '@/components/onboarding/GuidedTour';
 
-const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Campaigns', href: '/dashboard/campaigns', icon: Users },
-  { name: 'Calendar', href: '/dashboard/calendar', icon: Calendar },
-  { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
-  { name: 'Settings', href: '/dashboard/settings', icon: Settings },
-];
+// Icon mapping for dynamic navigation
+const iconMap = {
+  LayoutDashboard,
+  Users,
+  Calendar,
+  BarChart3,
+  Settings,
+  Bot,
+  Workflow,
+  History,
+  Sparkles,
+  Shield,
+};
 
 export default function DashboardLayout({
   children,
@@ -32,10 +47,44 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showTour, setShowTour] = useState(false);
   const pathname = usePathname();
+  const { user, userRole, userDoc, logout } = useAuth();
+
+  // Get role-based navigation
+  const navigation = userRole ? getRoleNavigation(userRole) : [];
+
+  // Show tour for new users
+  useEffect(() => {
+    const hasSeenTour = localStorage.getItem('tour_completed');
+    const hasCompletedOnboarding = localStorage.getItem('onboarding_completed');
+    
+    if (hasCompletedOnboarding && !hasSeenTour && pathname === '/dashboard') {
+      setShowTour(true);
+    }
+  }, [pathname]);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
+  const handleTourComplete = () => {
+    localStorage.setItem('tour_completed', 'true');
+    setShowTour(false);
+  };
+
+  const handleTourSkip = () => {
+    localStorage.setItem('tour_completed', 'true');
+    setShowTour(false);
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <ProtectedRoute>
+      <div className="min-h-screen bg-gray-50">
       {/* Mobile sidebar */}
       <div className={cn(
         'fixed inset-0 z-50 lg:hidden',
@@ -48,7 +97,7 @@ export default function DashboardLayout({
               <div className="p-2 bg-blue-100 rounded-lg">
                 <Sparkles className="h-5 w-5 text-blue-600" />
               </div>
-              <span className="text-lg font-semibold text-gray-900">AI Influencer</span>
+              <span className="text-lg font-semibold text-gray-900">Inspire AI</span>
             </div>
             <Button
               variant="ghost"
@@ -61,6 +110,7 @@ export default function DashboardLayout({
           <nav className="flex-1 px-4 py-4 space-y-2">
             {navigation.map((item) => {
               const isActive = pathname === item.href;
+              const IconComponent = iconMap[item.icon as keyof typeof iconMap] || Sparkles;
               return (
                 <Link
                   key={item.name}
@@ -73,7 +123,7 @@ export default function DashboardLayout({
                   )}
                   onClick={() => setSidebarOpen(false)}
                 >
-                  <item.icon className="h-4 w-4" />
+                  <IconComponent className="h-4 w-4" />
                   {item.name}
                 </Link>
               );
@@ -83,19 +133,20 @@ export default function DashboardLayout({
       </div>
 
       {/* Desktop sidebar */}
-      <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
+      <div id="main-navigation" className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
         <div className="flex flex-col flex-grow bg-white border-r border-gray-200">
           <div className="flex h-16 items-center px-4">
             <div className="flex items-center gap-2">
               <div className="p-2 bg-blue-100 rounded-lg">
                 <Sparkles className="h-5 w-5 text-blue-600" />
               </div>
-              <span className="text-lg font-semibold text-gray-900">AI Influencer</span>
+              <span className="text-lg font-semibold text-gray-900">Inspire AI</span>
             </div>
           </div>
           <nav className="flex-1 px-4 py-4 space-y-2">
             {navigation.map((item) => {
               const isActive = pathname === item.href;
+              const IconComponent = iconMap[item.icon as keyof typeof iconMap] || Sparkles;
               return (
                 <Link
                   key={item.name}
@@ -107,14 +158,14 @@ export default function DashboardLayout({
                       : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                   )}
                 >
-                  <item.icon className="h-4 w-4" />
+                  <IconComponent className="h-4 w-4" />
                   {item.name}
                 </Link>
               );
             })}
           </nav>
           <div className="p-4 border-t border-gray-200">
-            <Button variant="ghost" className="w-full justify-start">
+            <Button variant="ghost" className="w-full justify-start" onClick={handleLogout}>
               <LogOut className="h-4 w-4 mr-3" />
               Sign Out
             </Button>
@@ -125,7 +176,7 @@ export default function DashboardLayout({
       {/* Main content */}
       <div className="lg:pl-64">
         {/* Top bar */}
-        <div className="sticky top-0 z-40 flex h-16 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+        <div id="dashboard-header" className="sticky top-0 z-40 flex h-16 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
           <Button
             variant="ghost"
             size="sm"
@@ -140,11 +191,29 @@ export default function DashboardLayout({
             <div className="flex items-center gap-x-4 lg:gap-x-6">
               <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-                  <span className="text-sm font-medium text-blue-600">JD</span>
+                  <span className="text-sm font-medium text-blue-600">
+                    {userDoc?.displayName?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || 'U'}
+                  </span>
                 </div>
                 <div className="hidden sm:block">
-                  <p className="text-sm font-medium text-gray-900">John Doe</p>
-                  <p className="text-xs text-gray-500">Brand Manager</p>
+                  <p className="text-sm font-medium text-gray-900">
+                    {userDoc?.displayName || user?.email || 'User'}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-xs text-gray-500 capitalize">
+                      {userRole || 'User'}
+                    </p>
+                    {userRole && (
+                      <div className={cn(
+                        'px-2 py-0.5 rounded-full text-xs font-medium',
+                        userRole === 'admin' ? 'bg-red-100 text-red-700' :
+                        userRole === 'brand' ? 'bg-blue-100 text-blue-700' :
+                        'bg-green-100 text-green-700'
+                      )}>
+                        {userRole}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -154,10 +223,20 @@ export default function DashboardLayout({
         {/* Page content */}
         <main className="py-6">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            {/* Guided Tour */}
+            {showTour && userRole && (
+              <GuidedTour 
+                userRole={userRole}
+                onComplete={handleTourComplete}
+                onSkip={handleTourSkip}
+              />
+            )}
+            
             {children}
           </div>
         </main>
       </div>
     </div>
+    </ProtectedRoute>
   );
 }

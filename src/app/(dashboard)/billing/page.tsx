@@ -180,7 +180,7 @@ export default function BillingPage() {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-lg font-semibold text-gray-900">Current Plan</h2>
-            <p className="text-gray-600">You're currently on the {currentPlan.name} plan</p>
+            <p className="text-gray-600">You&apos;re currently on the {currentPlan.name} plan</p>
           </div>
           <Badge className="bg-blue-100 text-blue-800">
             <Crown className="h-3 w-3 mr-1" />

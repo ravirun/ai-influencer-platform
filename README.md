@@ -1,6 +1,8 @@
-# AI-Powered Influencer Platform
+# ✨ Inspire AI - AI Influencer Platform
 
-A comprehensive platform for AI-powered influencer marketing, built with Next.js, Firebase, and Google Gemini AI.
+**Inspire Your Audience with AI-Powered Content**
+
+A comprehensive platform for AI-powered influencer marketing, built with Next.js, Firebase, and Google Gemini AI. Generate engaging content, manage campaigns, and scale your influence with the power of artificial intelligence.
 
 ## 🚀 Features
 
@@ -63,7 +65,7 @@ src/
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd ai-influencer-platform
+   cd inspire-ai
    ```
 
 2. **Install dependencies**
@@ -261,7 +263,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Documentation**: Check the `/docs` folder for detailed guides
 - **Issues**: Report bugs and request features via GitHub Issues
 - **Discord**: Join our community Discord for real-time support
-- **Email**: Contact us at support@aiinfluencer.com
+- **Email**: Contact us at support@inspireai.com
 
 ## 🗺 Roadmap
 
@@ -285,4 +287,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-Built with ❤️ by the AI Influencer team
+Built with ❤️ by the Inspire AI team

@@ -120,3 +120,74 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Intro.js Custom Styles */
+.intro-highlight {
+  position: relative;
+  z-index: 1000;
+}
+
+.intro-tooltip {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e5e7eb;
+  max-width: 400px;
+}
+
+.intro-tooltip .introjs-tooltip-header {
+  background: #3b82f6;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px 8px 0 0;
+  font-weight: 600;
+}
+
+.intro-tooltip .introjs-tooltip-content {
+  padding: 16px;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.intro-tooltip .introjs-tooltip-buttons {
+  padding: 12px 16px;
+  border-top: 1px solid #e5e7eb;
+  text-align: right;
+}
+
+.intro-tooltip .introjs-button {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.intro-tooltip .introjs-button:hover {
+  background: #2563eb;
+}
+
+.intro-tooltip .introjs-button.introjs-skipbutton {
+  background: #6b7280;
+}
+
+.intro-tooltip .introjs-button.introjs-skipbutton:hover {
+  background: #4b5563;
+}
+
+.intro-tooltip .introjs-progress {
+  background: #e5e7eb;
+  height: 4px;
+  border-radius: 2px;
+  margin: 8px 0;
+}
+
+.intro-tooltip .introjs-progressbar {
+  background: #3b82f6;
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}

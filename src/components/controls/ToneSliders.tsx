@@ -195,8 +195,8 @@ export function ToneSliders({
       <div className="mt-4 p-3 bg-gray-50 rounded-md">
         <div className="text-xs text-gray-600 mb-1">Preview:</div>
         <div className="text-sm text-gray-800">
-          "Check out our amazing new product! {getEmojiPreview(settings.emoji)} 
-          Perfect for your lifestyle. {getCtaPreview(settings.cta)}"
+          &quot;Check out our amazing new product! {getEmojiPreview(settings.emoji)} 
+          Perfect for your lifestyle. {getCtaPreview(settings.cta)}&quot;
         </div>
       </div>
     </Card>

@@ -1,0 +1,185 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+    
+    function isAdmin() {
+      return getUserRole() == 'admin';
+    }
+    
+    function isBrand() {
+      return getUserRole() == 'brand';
+    }
+    
+    function isCreator() {
+      return getUserRole() == 'creator';
+    }
+    
+    function getUserBrandId() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.brandId;
+    }
+    
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    function isBrandOwner(brandId) {
+      return getUserBrandId() == brandId;
+    }
+
+    // Users collection
+    match /users/{userId} {
+      // Users can read and write their own data
+      allow read, write: if isAuthenticated() && isOwner(userId);
+      
+      // Admins can read all user data
+      allow read: if isAuthenticated() && isAdmin();
+      
+      // Admins can update user roles and other admin fields
+      allow update: if isAuthenticated() && isAdmin();
+    }
+
+    // Campaigns collection
+    match /campaigns/{campaignId} {
+      // Brands can create campaigns
+      allow create: if isAuthenticated() && isBrand() && 
+        request.resource.data.brandId == getUserBrandId();
+      
+      // Campaign owners can read and update their campaigns
+      allow read, update: if isAuthenticated() && 
+        (isBrandOwner(resource.data.brandId) || isAdmin());
+      
+      // Creators can read campaigns they're assigned to
+      allow read: if isAuthenticated() && isCreator() && 
+        resource.data.assignedCreators[request.auth.uid] != null;
+      
+      // Admins can do everything
+      allow read, write, delete: if isAuthenticated() && isAdmin();
+    }
+
+    // Assets collection (generated content)
+    match /assets/{assetId} {
+      // Users can create assets for their campaigns
+      allow create: if isAuthenticated() && 
+        (isBrand() || isCreator()) &&
+        request.resource.data.ownerId == request.auth.uid;
+      
+      // Asset owners can read and update their assets
+      allow read, update: if isAuthenticated() && 
+        (resource.data.ownerId == request.auth.uid || 
+         isBrandOwner(resource.data.brandId) || 
+         isAdmin());
+      
+      // Campaign participants can read assets
+      allow read: if isAuthenticated() && 
+        (isBrandOwner(resource.data.brandId) || 
+         isCreator() && resource.data.ownerId == request.auth.uid ||
+         isAdmin());
+      
+      // Admins can do everything
+      allow read, write, delete: if isAuthenticated() && isAdmin();
+    }
+
+    // Schedules collection
+    match /schedules/{scheduleId} {
+      // Users can create schedules for their assets
+      allow create: if isAuthenticated() && 
+        (isBrand() || isCreator());
+      
+      // Schedule owners can read and update their schedules
+      allow read, update: if isAuthenticated() && 
+        (resource.data.ownerId == request.auth.uid || 
+         isBrandOwner(resource.data.brandId) || 
+         isAdmin());
+      
+      // Admins can do everything
+      allow read, write, delete: if isAuthenticated() && isAdmin();
+    }
+
+    // Posts collection (published content)
+    match /posts/{postId} {
+      // Users can create posts from their schedules
+      allow create: if isAuthenticated() && 
+        (isBrand() || isCreator());
+      
+      // Post owners can read and update their posts
+      allow read, update: if isAuthenticated() && 
+        (resource.data.ownerId == request.auth.uid || 
+         isBrandOwner(resource.data.brandId) || 
+         isAdmin());
+      
+      // Admins can do everything
+      allow read, write, delete: if isAuthenticated() && isAdmin();
+    }
+
+    // Personas collection
+    match /personas/{personaId} {
+      // Users can create personas
+      allow create: if isAuthenticated() && 
+        (isBrand() || isCreator()) &&
+        request.resource.data.createdBy == request.auth.uid;
+      
+      // Persona owners can read and update their personas
+      allow read, update: if isAuthenticated() && 
+        (resource.data.createdBy == request.auth.uid || 
+         isBrandOwner(resource.data.brandId) || 
+         isAdmin());
+      
+      // System personas are readable by all authenticated users
+      allow read: if isAuthenticated() && 
+        resource.data.ownerType == 'system';
+      
+      // Admins can do everything
+      allow read, write, delete: if isAuthenticated() && isAdmin();
+    }
+
+    // Events collection (audit trail)
+    match /events/{eventId} {
+      // Users can create events for their own actions
+      allow create: if isAuthenticated() && 
+        request.resource.data.actorId == request.auth.uid;
+      
+      // Users can read events related to their campaigns/assets
+      allow read: if isAuthenticated() && 
+        (resource.data.actorId == request.auth.uid || 
+         isBrandOwner(resource.data.brandId) || 
+         isAdmin());
+      
+      // Admins can do everything
+      allow read, write, delete: if isAuthenticated() && isAdmin();
+    }
+
+    // Analytics collection
+    match /analytics/{analyticsId} {
+      // Users can read analytics for their own data
+      allow read: if isAuthenticated() && 
+        (resource.data.userId == request.auth.uid || 
+         isBrandOwner(resource.data.brandId) || 
+         isAdmin());
+      
+      // System can write analytics (via Cloud Functions)
+      allow write: if true; // This should be restricted to Cloud Functions in production
+      
+      // Admins can do everything
+      allow read, write, delete: if isAuthenticated() && isAdmin();
+    }
+
+    // Settings collection
+    match /settings/{settingId} {
+      // Only admins can access global settings
+      allow read, write: if isAuthenticated() && isAdmin();
+    }
+
+    // Default deny rule
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

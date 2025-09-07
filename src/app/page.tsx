@@ -21,7 +21,7 @@ export default function HomePage() {
               <div className="p-2 bg-blue-100 rounded-lg">
                 <Sparkles className="h-6 w-6 text-blue-600" />
               </div>
-              <span className="text-xl font-bold text-gray-900">AI Influencer</span>
+              <span className="text-xl font-bold text-gray-900">Inspire AI</span>
             </div>
             
             <div className="flex items-center gap-4">
@@ -40,8 +40,8 @@ export default function HomePage() {
       <section className="container mx-auto px-4 py-16">
         <div className="text-center max-w-4xl mx-auto">
           <h1 className="text-5xl font-bold text-gray-900 mb-6">
-            AI-Powered Influencer Marketing
-            <span className="text-blue-600"> Made Simple</span>
+            Inspire Your Audience with
+            <span className="text-blue-600"> AI-Powered Content</span>
           </h1>
           
           <p className="text-xl text-gray-600 mb-8 leading-relaxed">
@@ -50,15 +50,25 @@ export default function HomePage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/signup">
+            <Link href="/login">
               <Button size="lg" className="px-8 py-3">
-                Start Free Trial
+                Try Demo Now
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
-            <Button variant="outline" size="lg" className="px-8 py-3">
-              Watch Demo
-            </Button>
+            <Link href="/signup">
+              <Button variant="outline" size="lg" className="px-8 py-3">
+                Create Account
+              </Button>
+            </Link>
+          </div>
+          
+          <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <p className="text-sm text-blue-800 font-medium mb-2">Demo Credentials Available</p>
+            <p className="text-xs text-blue-700">
+              Brand: brand@demo.com | Creator: creator@demo.com | Admin: admin@demo.com
+            </p>
+            <p className="text-xs text-blue-600 mt-1">Password: password123</p>
           </div>
         </div>
       </section>
@@ -181,15 +191,17 @@ export default function HomePage() {
             Join thousands of brands and creators already using AI to scale their impact.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/signup">
+            <Link href="/login">
               <Button size="lg" variant="secondary" className="px-8 py-3">
-                Start Free Trial
+                Try Demo Now
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
-            <Button size="lg" variant="outline" className="px-8 py-3 border-white text-white hover:bg-white hover:text-blue-600">
-              Schedule Demo
-            </Button>
+            <Link href="/signup">
+              <Button size="lg" variant="outline" className="px-8 py-3 border-white text-white hover:bg-white hover:text-blue-600">
+                Create Account
+              </Button>
+            </Link>
           </div>
         </Card>
       </section>
@@ -202,10 +214,10 @@ export default function HomePage() {
               <div className="p-2 bg-blue-100 rounded-lg">
                 <Sparkles className="h-5 w-5 text-blue-600" />
               </div>
-              <span className="text-lg font-semibold text-gray-900">AI Influencer</span>
+              <span className="text-lg font-semibold text-gray-900">Inspire AI</span>
             </div>
             <p className="text-gray-600">
-              © 2024 AI Influencer Platform. All rights reserved.
+              © 2024 Inspire AI. All rights reserved.
             </p>
           </div>
         </div>

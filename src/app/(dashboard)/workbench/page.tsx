@@ -1,9 +1,9 @@
-import { AIWorkbench } from '@/components/llm/AIWorkbench';
+import { SimpleAIWorkbench } from '@/components/copilot/SimpleAIWorkbench';
 
 export default function WorkbenchPage() {
   return (
     <div className="space-y-6">
-      <AIWorkbench 
+      <SimpleAIWorkbench 
         campaignId="demo_campaign_1"
         personaId="default_persona"
       />
