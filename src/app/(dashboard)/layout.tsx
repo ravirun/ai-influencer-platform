@@ -25,6 +25,7 @@ import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { useAuth } from '@/lib/auth';
 import { getRoleNavigation, hasFeature } from '@/lib/rbac';
 import { Role } from '@/lib/types';
+import { SessionIndicator } from '@/components/session/SessionIndicator';
 
 // Icon mapping for dynamic navigation
 const iconMap = {
@@ -169,6 +170,7 @@ export default function DashboardLayout({
           <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
             <div className="flex flex-1" />
             <div className="flex items-center gap-x-4 lg:gap-x-6">
+              <SessionIndicator />
               <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
                   <span className="text-sm font-medium text-blue-600">

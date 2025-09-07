@@ -31,7 +31,8 @@ export const ROLE_PERMISSIONS: Record<Role, RolePermissions> = {
       '/billing',
       '/settings',
       '/personas',
-      '/audit'
+      '/audit',
+      '/sessions'
     ],
     canCreate: [
       'campaigns',
@@ -75,7 +76,8 @@ export const ROLE_PERMISSIONS: Record<Role, RolePermissions> = {
       '/calendar',
       '/analytics',
       '/settings',
-      '/personas'
+      '/personas',
+      '/sessions'
     ],
     canCreate: [
       'content',
@@ -119,6 +121,7 @@ export const ROLE_NAVIGATION: Record<Role, Array<{
     { name: 'Analytics', href: '/analytics', icon: 'BarChart3' },
     { name: 'Audit Trail', href: '/audit', icon: 'History' },
     { name: 'Billing', href: '/billing', icon: 'Settings' },
+    { name: 'Sessions', href: '/sessions', icon: 'Shield' },
     { name: 'Settings', href: '/settings', icon: 'Settings' },
     { name: 'Personas', href: '/personas', icon: 'Sparkles' },
   ],
@@ -132,6 +135,7 @@ export const ROLE_NAVIGATION: Record<Role, Array<{
     { name: 'Analytics', href: '/analytics', icon: 'BarChart3' },
     { name: 'Audit Trail', href: '/audit', icon: 'History' },
     { name: 'Billing', href: '/billing', icon: 'Settings' },
+    { name: 'Sessions', href: '/sessions', icon: 'Shield' },
     { name: 'Settings', href: '/settings', icon: 'Settings' },
     { name: 'Personas', href: '/personas', icon: 'Sparkles' },
   ],
@@ -142,6 +146,7 @@ export const ROLE_NAVIGATION: Record<Role, Array<{
     { name: 'Content', href: '/content', icon: 'Workflow' },
     { name: 'Calendar', href: '/calendar', icon: 'Calendar' },
     { name: 'Analytics', href: '/analytics', icon: 'BarChart3' },
+    { name: 'Sessions', href: '/sessions', icon: 'Shield' },
     { name: 'Settings', href: '/settings', icon: 'Settings' },
     { name: 'Personas', href: '/personas', icon: 'Sparkles' },
   ],

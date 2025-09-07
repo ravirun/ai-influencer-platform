@@ -22,6 +22,7 @@ import {
 } from 'firebase/firestore';
 import { auth, db } from './firebase';
 import { Role, UserDoc } from './types';
+import { sessionManager } from './session-manager';
 
 interface AuthContextType {
   user: User | null;
@@ -92,10 +93,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log('User document fetched:', userData);
         setUserDoc(userData);
         setUserRole(userData?.role || null);
+        
+        // Create session for authenticated user
+        if (userData) {
+          try {
+            await sessionManager.createSession(user, userData);
+            console.log('Session created for user:', user.email);
+          } catch (error) {
+            console.error('Error creating session:', error);
+          }
+        }
       } else {
         console.log('No user, clearing user data');
         setUserDoc(null);
         setUserRole(null);
+        
+        // End session when user logs out
+        try {
+          await sessionManager.endSession();
+          console.log('Session ended');
+        } catch (error) {
+          console.error('Error ending session:', error);
+        }
       }
       setLoading(false);
     });
@@ -234,6 +253,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = async () => {
     try {
+      // End session before signing out
+      await sessionManager.endSession();
+      
       await signOut(auth);
       setUserDoc(null);
       setUserRole(null);
