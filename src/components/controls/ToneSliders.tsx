@@ -103,7 +103,7 @@ export function ToneSliders({
           </div>
           <Slider
             value={[settings.tone]}
-            onValueChange={([value]) => updateSetting('tone', value)}
+            onValueChange={([value]: number[]) => updateSetting('tone', value)}
             max={1}
             min={0}
             step={0.1}
@@ -131,7 +131,7 @@ export function ToneSliders({
           </div>
           <Slider
             value={[settings.emoji]}
-            onValueChange={([value]) => updateSetting('emoji', value)}
+            onValueChange={([value]: number[]) => updateSetting('emoji', value)}
             max={3}
             min={0}
             step={0.5}
@@ -159,7 +159,7 @@ export function ToneSliders({
           </div>
           <Slider
             value={[settings.cta]}
-            onValueChange={([value]) => updateSetting('cta', value)}
+            onValueChange={([value]: number[]) => updateSetting('cta', value)}
             max={3}
             min={0}
             step={0.5}

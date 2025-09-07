@@ -149,7 +149,7 @@ export function LLMEditor({
                 </div>
 
                 <Textarea
-                  ref={(el) => (textareaRefs.current[block.id] = el)}
+                  ref={(el) => { textareaRefs.current[block.id] = el; }}
                   value={block.text}
                   onChange={(e) => updateBlock(block.id, { text: e.target.value })}
                   placeholder={`Enter ${block.kind} prompt...`}

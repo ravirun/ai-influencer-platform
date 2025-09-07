@@ -96,7 +96,7 @@ export class GeminiService {
     
     if (persona) {
       system += `\nPersona: ${persona.name}\n`;
-      system += `Voice traits: ${persona.voiceTraits?.join(', ')}\n`;
+      system += `Voice traits: ${(persona as any).voiceTraits?.join(', ') || 'professional'}\n`;
     }
 
     if (options?.tone !== undefined) {
