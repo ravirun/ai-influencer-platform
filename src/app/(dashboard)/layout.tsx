@@ -25,7 +25,6 @@ import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { useAuth } from '@/lib/auth';
 import { getRoleNavigation, hasFeature } from '@/lib/rbac';
 import { Role } from '@/lib/types';
-import GuidedTour from '@/components/onboarding/GuidedTour';
 
 // Icon mapping for dynamic navigation
 const iconMap = {
@@ -47,22 +46,12 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [showTour, setShowTour] = useState(false);
   const pathname = usePathname();
   const { user, userRole, userDoc, logout } = useAuth();
 
   // Get role-based navigation
   const navigation = userRole ? getRoleNavigation(userRole) : [];
 
-  // Show tour for new users
-  useEffect(() => {
-    const hasSeenTour = localStorage.getItem('tour_completed');
-    const hasCompletedOnboarding = localStorage.getItem('onboarding_completed');
-    
-    if (hasCompletedOnboarding && !hasSeenTour && pathname === '/dashboard') {
-      setShowTour(true);
-    }
-  }, [pathname]);
 
   const handleLogout = async () => {
     try {
@@ -72,15 +61,6 @@ export default function DashboardLayout({
     }
   };
 
-  const handleTourComplete = () => {
-    localStorage.setItem('tour_completed', 'true');
-    setShowTour(false);
-  };
-
-  const handleTourSkip = () => {
-    localStorage.setItem('tour_completed', 'true');
-    setShowTour(false);
-  };
 
   return (
     <ProtectedRoute>
@@ -223,14 +203,6 @@ export default function DashboardLayout({
         {/* Page content */}
         <main className="py-6">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            {/* Guided Tour */}
-            {showTour && userRole && (
-              <GuidedTour 
-                userRole={userRole}
-                onComplete={handleTourComplete}
-                onSkip={handleTourSkip}
-              />
-            )}
             
             {children}
           </div>

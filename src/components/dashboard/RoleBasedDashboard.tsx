@@ -142,16 +142,6 @@ export function RoleBasedDashboard() {
   const getQuickActions = (role: Role) => {
     const actions = [];
     
-    // Add demo campaign action for brand and creator roles
-    if (role === 'brand' || role === 'creator') {
-      actions.push({
-        title: 'Demo Campaign',
-        description: 'Explore your demo campaign',
-        href: '/demo-campaign',
-        icon: Sparkles,
-        color: 'yellow'
-      });
-    }
     
     if (hasFeature(role, 'contentGeneration')) {
       actions.push({

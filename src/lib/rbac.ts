@@ -160,7 +160,6 @@ export const ROLE_DASHBOARD_WIDGETS: Record<Role, string[]> = {
   ],
   brand: [
     'overview',
-    'demo-campaign',
     'campaigns',
     'creators',
     'content',
@@ -169,7 +168,6 @@ export const ROLE_DASHBOARD_WIDGETS: Record<Role, string[]> = {
   ],
   creator: [
     'overview',
-    'demo-campaign',
     'campaigns',
     'content',
     'analytics',

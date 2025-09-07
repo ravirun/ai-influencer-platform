@@ -33,11 +33,6 @@ export function ProtectedRoute({
         return;
       }
 
-      // Check if user has completed onboarding
-      if (userDoc && !userDoc.onboardingCompleted) {
-        router.push('/onboarding');
-        return;
-      }
 
       // Check role-based access
       if (userRole) {
@@ -73,17 +68,6 @@ export function ProtectedRoute({
     return null;
   }
 
-  // Check if user has completed onboarding
-  if (userDoc && !userDoc.onboardingCompleted) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
-          <p className="text-gray-600">Redirecting to onboarding...</p>
-        </div>
-      </div>
-    );
-  }
 
   // Check role-based access
   if (userRole && !canAccessRoute(userRole, pathname)) {

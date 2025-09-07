@@ -68,8 +68,7 @@ export interface UserDoc {
     logoUrl?: string;
   };
   
-  // Onboarding & Preferences
-  onboardingCompleted: boolean;
+  // Preferences
   preferences?: UserPreferences;
   
   // Timestamps

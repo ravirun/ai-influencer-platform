@@ -25,7 +25,8 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { CampaignDoc, Channel, Status, CampaignStatus } from '@/lib/types';
+import { CampaignDoc,  CampaignStatus } from '@/lib/types';
+import { Timestamp } from 'firebase/firestore';
 
 interface CampaignManagerProps {
   className?: string;
@@ -50,14 +51,18 @@ export function CampaignManager({ className, onCreateCampaign }: CampaignManager
         personaId: 'persona_summer',
         channels: ['instagram', 'tiktok'],
         budget: 50000,
+        currency: 'USD',
         status: 'live',
+        startDate: Timestamp.fromDate(new Date()),
+        endDate: Timestamp.fromDate(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)),
         kpis: {
           impressionsGoal: 100000,
           ctrGoal: 3.5,
           conversionGoal: 500
         },
         createdBy: 'user_1',
-        createdAt: Date.now() - 7 * 24 * 60 * 60 * 1000
+        createdAt: Timestamp.fromDate(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)),
+        updatedAt: Timestamp.fromDate(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)),
       },
       {
         brandId: 'brand_1',
@@ -66,14 +71,18 @@ export function CampaignManager({ className, onCreateCampaign }: CampaignManager
         target: 'Holiday shoppers looking for unique gifts',
         channels: ['instagram', 'youtube'],
         budget: 30000,
+        currency: 'USD',
         status: 'draft',
+        startDate: Timestamp.fromDate(new Date()),
+        endDate: Timestamp.fromDate(new Date(Date.now() + 60 * 24 * 60 * 60 * 1000)),
         kpis: {
           impressionsGoal: 75000,
           ctrGoal: 2.8,
           conversionGoal: 300
         },
         createdBy: 'user_1',
-        createdAt: Date.now() - 3 * 24 * 60 * 60 * 1000
+        createdAt: Timestamp.fromDate(new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)),
+        updatedAt: Timestamp.fromDate(new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)),
       },
       {
         brandId: 'brand_1',
@@ -82,14 +91,18 @@ export function CampaignManager({ className, onCreateCampaign }: CampaignManager
         target: 'Students and parents preparing for school',
         channels: ['instagram', 'tiktok', 'youtube'],
         budget: 40000,
+        currency: 'USD',
         status: 'paused',
+        startDate: Timestamp.fromDate(new Date()),
+        endDate: Timestamp.fromDate(new Date(Date.now() + 45 * 24 * 60 * 60 * 1000)),
         kpis: {
           impressionsGoal: 80000,
           ctrGoal: 3.0,
           conversionGoal: 400
         },
         createdBy: 'user_1',
-        createdAt: Date.now() - 14 * 24 * 60 * 60 * 1000
+        createdAt: Timestamp.fromDate(new Date(Date.now() - 14 * 24 * 60 * 60 * 1000)),
+        updatedAt: Timestamp.fromDate(new Date(Date.now() - 14 * 24 * 60 * 60 * 1000)),
       }
     ];
     setCampaigns(mockCampaigns);
@@ -107,7 +120,7 @@ export function CampaignManager({ className, onCreateCampaign }: CampaignManager
       case 'live': return 'bg-green-100 text-green-800';
       case 'draft': return 'bg-gray-100 text-gray-800';
       case 'paused': return 'bg-yellow-100 text-yellow-800';
-      case 'done': return 'bg-blue-100 text-blue-800';
+      case 'completed': return 'bg-blue-100 text-blue-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -117,7 +130,7 @@ export function CampaignManager({ className, onCreateCampaign }: CampaignManager
       case 'live': return <Play className="h-3 w-3" />;
       case 'draft': return <Edit className="h-3 w-3" />;
       case 'paused': return <Pause className="h-3 w-3" />;
-      case 'done': return <CheckCircle className="h-3 w-3" />;
+      case 'completed': return <CheckCircle className="h-3 w-3" />;
       default: return <Clock className="h-3 w-3" />;
     }
   };
@@ -296,7 +309,7 @@ export function CampaignManager({ className, onCreateCampaign }: CampaignManager
                     <Calendar className="h-4 w-4 text-gray-400" />
                     <span className="text-gray-600">Created:</span>
                     <span className="font-medium">
-                      {new Date(campaign.createdAt).toLocaleDateString()}
+                      {campaign.createdAt.toDate().toLocaleDateString()}
                     </span>
                   </div>
                 </div>

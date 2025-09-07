@@ -12,10 +12,9 @@ export async function POST(req: NextRequest) {
       model: google('models/gemini-1.5-pro'),
       messages,
       temperature: 0.7,
-      maxTokens: 1000,
     });
 
-    return result.toDataStreamResponse();
+    return result.toTextStreamResponse();
   } catch (error) {
     console.error('CopilotKit API error:', error);
     return new Response('Internal Server Error', { status: 500 });

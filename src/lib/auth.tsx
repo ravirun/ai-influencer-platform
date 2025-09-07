@@ -7,7 +7,7 @@ import {
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  sendEmailVerification,
+  sendEmailVerification as firebaseSendEmailVerification,
   sendPasswordResetEmail,
   signOut, 
   onAuthStateChanged,
@@ -28,14 +28,13 @@ interface AuthContextType {
   userDoc: UserDoc | null;
   userRole: Role | null;
   loading: boolean;
-  signInWithGoogle: () => Promise<void>;
-  signInWithEmail: (email: string, password: string) => Promise<void>;
-  signUpWithEmail: (email: string, password: string, displayName: string, role: Role) => Promise<void>;
+  signInWithGoogle: () => Promise<any>;
+  signInWithEmail: (email: string, password: string) => Promise<any>;
+  signUpWithEmail: (email: string, password: string, displayName: string, role: Role) => Promise<any>;
   sendPasswordReset: (email: string) => Promise<void>;
   sendEmailVerification: () => Promise<void>;
   logout: () => Promise<void>;
   updateUserRole: (role: Role) => Promise<void>;
-  completeOnboarding: () => Promise<void>;
   refreshUserData: () => Promise<void>;
 }
 
@@ -66,7 +65,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           displayName: user.displayName || user.email?.split('@')[0] || 'User',
           email: user.email || '',
           photoURL: user.photoURL || undefined,
-          onboardingCompleted: false,
           createdAt: serverTimestamp(),
         };
         
@@ -86,12 +84,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      console.log('Auth state changed - user:', user?.email, 'uid:', user?.uid);
       setUser(user);
       if (user) {
+        console.log('Fetching user document for:', user.email);
         const userData = await fetchUserDoc(user);
+        console.log('User document fetched:', userData);
         setUserDoc(userData);
         setUserRole(userData?.role || null);
       } else {
+        console.log('No user, clearing user data');
         setUserDoc(null);
         setUserRole(null);
       }
@@ -103,15 +105,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithGoogle = async () => {
     try {
+      console.log('Starting Google sign-in process...');
       const provider = new GoogleAuthProvider();
       // Add additional scopes if needed
       provider.addScope('email');
       provider.addScope('profile');
       
+      console.log('Calling signInWithPopup...');
       const result = await signInWithPopup(auth, provider);
       
       // Log successful sign-in
-      console.log('Google sign-in successful:', result.user.email);
+      console.log('Google sign-in successful:', result.user.email, 'uid:', result.user.uid);
       
       return result;
     } catch (error: any) {
@@ -156,7 +160,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await updateProfile(result.user, { displayName });
       
       // Send email verification
-      await sendEmailVerification(result.user);
+      await firebaseSendEmailVerification(result.user);
       
       // Create user document in Firestore
       if (db) {
@@ -166,7 +170,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           displayName,
           email: result.user.email || '',
           photoURL: result.user.photoURL || undefined,
-          onboardingCompleted: false,
           status: 'pending_verification' as const,
           emailVerified: false,
           createdAt: serverTimestamp(),
@@ -214,7 +217,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!user) throw new Error('No user logged in');
     
     try {
-      await sendEmailVerification(user);
+      await firebaseSendEmailVerification(user);
       console.log('Email verification sent to:', user.email);
     } catch (error: any) {
       console.error('Email verification error:', error);
@@ -273,29 +276,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const completeOnboarding = async () => {
-    if (!user) throw new Error('No user logged in');
-    if (!db) throw new Error('Firebase database not initialized');
-    
-    try {
-      const userDocRef = doc(db, 'users', user.uid);
-      await updateDoc(userDocRef, {
-        onboardingCompleted: true,
-        updatedAt: serverTimestamp(),
-      });
-      
-      if (userDoc) {
-        setUserDoc({ ...userDoc, onboardingCompleted: true });
-      }
-    } catch (error) {
-      console.error('Error completing onboarding:', error);
-      if (error instanceof Error) {
-        console.error('Error details:', error.message);
-        console.error('Error code:', (error as any).code);
-      }
-      throw error;
-    }
-  };
 
   const refreshUserData = async () => {
     if (user) {
@@ -317,7 +297,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     sendEmailVerification,
     logout,
     updateUserRole,
-    completeOnboarding,
     refreshUserData
   };
 

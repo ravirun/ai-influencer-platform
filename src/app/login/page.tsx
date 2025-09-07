@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Sparkles, CheckCircle, Loader2 } from 'lucide-react';
@@ -9,14 +9,30 @@ import { useAuth } from '@/lib/auth';
 import { toast } from 'sonner';
 import { getAuthErrorMessage, logAuthError } from '@/lib/auth-errors';
 import { AuthErrorDisplay } from '@/components/auth/AuthErrorDisplay';
+import { getDefaultRoute } from '@/lib/rbac';
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState<any>(null);
   const [loginSuccess, setLoginSuccess] = useState(false);
   
-  const { signInWithGoogle, user, userDoc } = useAuth();
+  const { signInWithGoogle, user, userDoc, userRole, loading } = useAuth();
   const router = useRouter();
+
+  // Redirect authenticated users away from login page
+  useEffect(() => {
+    console.log('Login page useEffect - loading:', loading, 'user:', user?.email, 'userDoc:', userDoc, 'userRole:', userRole);
+    
+    if (!loading && user && userDoc) {
+      console.log('User is authenticated, checking redirect logic...');
+      
+      if (userRole) {
+        const defaultRoute = getDefaultRoute(userRole);
+        console.log('User authenticated, redirecting to:', defaultRoute);
+        router.push(defaultRoute);
+      }
+    }
+  }, [user, userDoc, userRole, loading, router]);
 
   // Removed getErrorMessage function - now using the utility from auth-errors.ts
 
@@ -35,7 +51,7 @@ export default function LoginPage() {
         duration: 3000,
       });
       
-      // The auth context will handle the redirect based on onboarding status
+      // The auth context will handle the redirect
       // No need to manually redirect here
     } catch (error: unknown) {
       // Use the enhanced error handling utility
@@ -60,6 +76,30 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   };
+
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't show login form if user is already authenticated
+  if (user && userDoc) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
+          <p className="text-gray-600">Redirecting...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">

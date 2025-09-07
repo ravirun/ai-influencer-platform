@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PersonaDoc } from '@/lib/types';
+import { Timestamp } from 'firebase/firestore';
 
 interface PersonaStudioProps {
   className?: string;
@@ -53,11 +54,13 @@ export function PersonaStudio({ className }: PersonaStudioProps) {
         ],
         embeddingRef: 'embedding_1',
         createdBy: 'system',
-        createdAt: Date.now() - 30 * 24 * 60 * 60 * 1000,
+        createdAt: Timestamp.fromDate(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)),
         sliders: {
           tone: 0.7, // playful
           emoji: 2.2, // moderate-heavy
-          cta: 2.5 // strong
+          cta: 2.5, // strong
+          length: 0.6, // medium
+          creativity: 0.8 // high
         }
       },
       {
@@ -71,11 +74,13 @@ export function PersonaStudio({ className }: PersonaStudioProps) {
         ],
         embeddingRef: 'embedding_2',
         createdBy: 'user_1',
-        createdAt: Date.now() - 15 * 24 * 60 * 60 * 1000,
+        createdAt: Timestamp.fromDate(new Date(Date.now() - 15 * 24 * 60 * 60 * 1000)),
         sliders: {
           tone: 0.8, // very playful
           emoji: 2.8, // heavy
-          cta: 2.0 // clear
+          cta: 2.0, // clear
+          length: 0.7, // medium-long
+          creativity: 0.9 // very high
         }
       },
       {
@@ -89,11 +94,13 @@ export function PersonaStudio({ className }: PersonaStudioProps) {
         ],
         embeddingRef: 'embedding_3',
         createdBy: 'creator_1',
-        createdAt: Date.now() - 7 * 24 * 60 * 60 * 1000,
+        createdAt: Timestamp.fromDate(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)),
         sliders: {
           tone: 0.4, // more formal
           emoji: 1.5, // moderate
-          cta: 1.8 // subtle-strong
+          cta: 1.8, // subtle-strong
+          length: 0.5, // medium
+          creativity: 0.6 // moderate
         }
       }
     ];
@@ -119,7 +126,7 @@ export function PersonaStudio({ className }: PersonaStudioProps) {
     const duplicatedPersona = {
       ...persona,
       name: `${persona.name} (Copy)`,
-      createdAt: Date.now()
+      createdAt: Timestamp.fromDate(new Date())
     };
     setPersonas(prev => [...prev, duplicatedPersona]);
   };

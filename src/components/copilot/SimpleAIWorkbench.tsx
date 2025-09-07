@@ -44,18 +44,24 @@ export function SimpleAIWorkbench({ campaignId, personaId, className }: SimpleAI
   const [isGenerating, setIsGenerating] = useState(false);
   const [totalCost, setTotalCost] = useState(0);
   const [activeTab, setActiveTab] = useState('chat');
+  const [input, setInput] = useState('');
 
-  // Use Vercel AI SDK's useChat hook
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
-    api: '/api/chat',
-    body: {
-      campaignId,
-      personaId,
-      tone: toneSettings.tone,
-      emoji: toneSettings.emoji,
-      cta: toneSettings.cta,
-    },
-  });
+  // Custom input change handler
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+  };
+
+  // Custom submit handler
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (input.trim()) {
+      // For now, just clear the input - the actual chat functionality will be implemented later
+      setInput('');
+    }
+  };
+
+  // Mock messages for now - will be replaced with actual chat functionality
+  const messages: any[] = [];
 
   const handleGenerateVariants = useCallback(async () => {
     setIsGenerating(true);
@@ -187,7 +193,7 @@ export function SimpleAIWorkbench({ campaignId, personaId, className }: SimpleAI
                     </div>
                   ))}
                   
-                  {isLoading && (
+                  {isGenerating && (
                     <div className="p-3 rounded-lg bg-gray-50 mr-8">
                       <div className="flex items-center gap-2">
                         <Loader2 className="h-4 w-4 animate-spin text-gray-600" />
@@ -204,9 +210,9 @@ export function SimpleAIWorkbench({ campaignId, personaId, className }: SimpleAI
                     onChange={handleInputChange}
                     placeholder="Ask me to generate content, explain campaign strategy, or help with anything..."
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    disabled={isLoading}
+                    disabled={isGenerating}
                   />
-                  <Button type="submit" disabled={isLoading || !input.trim()}>
+                  <Button type="submit" disabled={isGenerating || !input.trim()}>
                     <Send className="h-4 w-4" />
                   </Button>
                 </form>

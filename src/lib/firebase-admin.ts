@@ -22,4 +22,12 @@ export const adminAuth = getAuth(adminApp);
 export const adminDb = getFirestore(adminApp);
 export const adminStorage = getStorage(adminApp);
 
+// Export auth for backward compatibility
+export const auth = adminAuth;
+
+// Export getFirebaseAdmin function
+export function getFirebaseAdmin() {
+  return adminApp;
+}
+
 export default adminApp;

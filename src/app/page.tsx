@@ -52,7 +52,7 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/login">
               <Button size="lg" className="px-8 py-3">
-                Try Demo Now
+                Get Started
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
@@ -63,13 +63,6 @@ export default function HomePage() {
             </Link>
           </div>
           
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <p className="text-sm text-blue-800 font-medium mb-2">Demo Credentials Available</p>
-            <p className="text-xs text-blue-700">
-              Brand: brand@demo.com | Creator: creator@demo.com | Admin: admin@demo.com
-            </p>
-            <p className="text-xs text-blue-600 mt-1">Password: password123</p>
-          </div>
         </div>
       </section>
 
@@ -193,7 +186,7 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/login">
               <Button size="lg" variant="secondary" className="px-8 py-3">
-                Try Demo Now
+                Get Started
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
