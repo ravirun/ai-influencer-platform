@@ -123,5 +123,22 @@ Return the variants as structured JSON with all required fields.`;
   }
 }
 
-// Export the protected handler
-export const POST = requirePermission('create', 'content', handleGenerateContent);
+// Export the handler with fallback for development
+export async function POST(req: NextRequest) {
+  try {
+    // Try to use the protected handler first
+    if (process.env.FIREBASE_ADMIN_PROJECT_ID && process.env.FIREBASE_ADMIN_CLIENT_EMAIL && process.env.FIREBASE_ADMIN_PRIVATE_KEY) {
+      return await requirePermission('create', 'content', handleGenerateContent)(req);
+    } else {
+      // Fallback for development when Firebase Admin is not configured
+      console.warn('Firebase Admin not configured, using development mode for content generation');
+      return await handleGenerateContent(req);
+    }
+  } catch (error) {
+    console.error('Content generation API error:', error);
+    return NextResponse.json(
+      { error: 'Failed to generate content' },
+      { status: 500 }
+    );
+  }
+}

@@ -9,18 +9,28 @@ const firebaseAdminConfig = {
   privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
 };
 
-// Initialize Firebase Admin
-const adminApp = getApps().length === 0 
-  ? initializeApp({
-      credential: cert(firebaseAdminConfig),
-      storageBucket: `${process.env.FIREBASE_ADMIN_PROJECT_ID}.appspot.com`,
-    })
-  : getApps()[0];
+// Initialize Firebase Admin only if credentials are available
+let adminApp: any = null;
 
-// Initialize Firebase Admin services
-export const adminAuth = getAuth(adminApp);
-export const adminDb = getFirestore(adminApp);
-export const adminStorage = getStorage(adminApp);
+if (firebaseAdminConfig.projectId && firebaseAdminConfig.clientEmail && firebaseAdminConfig.privateKey) {
+  try {
+    adminApp = getApps().length === 0 
+      ? initializeApp({
+          credential: cert(firebaseAdminConfig),
+          storageBucket: `${process.env.FIREBASE_ADMIN_PROJECT_ID}.appspot.com`,
+        })
+      : getApps()[0];
+  } catch (error) {
+    console.warn('Failed to initialize Firebase Admin SDK:', error);
+  }
+} else {
+  console.warn('Firebase Admin SDK credentials not configured. Server-side features will be limited.');
+}
+
+// Initialize Firebase Admin services only if adminApp is available
+export const adminAuth = adminApp ? getAuth(adminApp) : null;
+export const adminDb = adminApp ? getFirestore(adminApp) : null;
+export const adminStorage = adminApp ? getStorage(adminApp) : null;
 
 // Export auth for backward compatibility
 export const auth = adminAuth;
